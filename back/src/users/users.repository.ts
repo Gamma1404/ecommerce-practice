@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IUser } from 'src/interfaces/user.interface';
 
-const users : IUser[] = [
+let users : IUser[] = [
     {
         id: 1,
         email: 'DWayne@mail.com',
@@ -43,10 +43,41 @@ const users : IUser[] = [
         city: 'Metropolis'
     }
 ]
+let id = 5;
 
 @Injectable()
 export class UsersRepository {
-    getUsers() : IUser[] {
-        return users
+    async getUsers(page: number, limit: number) : Promise<Omit<IUser, 'password'>[]> {
+        const start = (page - 1) * limit
+        const end = start + limit
+        const usersList = users.slice(start, end)
+        return usersList.map(({password, ...user}) => user)
+    }
+
+    async getUserById(id: number): Promise<Omit<IUser, 'password'>> {
+        const {password, ...user} = users.find(user => user.id === id)
+        return user
+    }
+
+    async createUser(user: Omit<IUser, 'id'>): Promise<string> {
+        const newUser = {...user, id}
+        users.push(newUser)
+        id++
+        return `Se creo usuario con id:${newUser.id}`
+    }
+
+    async updateUser(id: number, editedUser: Partial<IUser>): Promise<string> {
+        users = users.map(user => {
+            if(user.id === id) {
+                return {...user, ...editedUser}
+            }
+            return user
+        })
+        return `Se edito usuario con id:${id}`
+    }
+
+    async deleteUser(id: number): Promise<string> {
+        users = users.filter(user => user.id !== id)
+        return `Se elimino al usuario con id:${id}`
     }
 }
