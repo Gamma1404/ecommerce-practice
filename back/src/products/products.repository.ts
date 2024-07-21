@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IProduct } from 'src/interfaces/product.interface';
 
-const products: IProduct[] = [
+let products: IProduct[] = [
     {
         id: 1,
         name: 'IPhone 15',
@@ -36,9 +36,42 @@ const products: IProduct[] = [
     }
 ]
 
+let id = 5
+
 @Injectable()
 export class ProductsRepository {
-    getProducts(): IProduct[] {
-        return products
+    async getProducts(page: number, limit: number): Promise<IProduct[]> {
+        const start = (page-1) * limit
+        const end = start + limit
+        const productsList = products.slice(start, end)
+        return productsList
     }
+
+    async getProductById(id: number): Promise<IProduct> {
+        const product = products.find(product => product.id === id)
+        return product
+    }
+
+    async createProduct(newProduct: Omit<IProduct, 'id'>): Promise<string> {
+        const product = {id, ...newProduct}
+        id++
+        products.push(product)
+        return `Se creo producto con id:${product.id}`
+    }
+
+    async updateProduct(id: number, editedProduct: Partial<IProduct>): Promise<string> {
+        products = products.map(product => {
+            if(product.id === id) {
+                return {...product, ...editedProduct}
+            }
+            return product
+        })
+        return `Se edito el producto con id: ${id}`
+    }
+
+    async deleteProduct(id: number): Promise<string> {
+        products = products.filter(product => product.id !== id)
+        return `Se elimino el producto con id: ${id}`
+    }
+
 }
