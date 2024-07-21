@@ -80,4 +80,9 @@ export class UsersRepository {
         users = users.filter(user => user.id !== id)
         return `Se elimino al usuario con id:${id}`
     }
+
+    async getUserByEmail(email: string): Promise<IUser> {
+        const user: IUser = users.find(user => user.email === email)
+        return user
+    }
 }
