@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { IUser } from 'src/interfaces/user.interface';
+import { EmailDto } from './dto/email.dtos';
 import { NameDto } from './dto/name.dtos';
 
 @Controller('users')
@@ -17,6 +18,11 @@ export class UsersController {
     @Get(':id')
     getUserById(@Param('id') id: string) {
         return this.usersService.getUserById(id)
+    }
+
+    @Get('email')
+    getUserByEmail(@Body('email') emailDto: EmailDto) {
+        return this.usersService.getUserByEmail(emailDto.email)
     }
 
     @Get('name')
