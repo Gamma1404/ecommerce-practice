@@ -47,6 +47,10 @@ let id = 5;
 
 @Injectable()
 export class UsersRepository {
+    getUserByName(name: string) {
+        return users.find(user => user.name === name)
+    }
+
     async getUsers(page: number, limit: number) : Promise<Omit<IUser, 'password'>[]> {
         const start = (page - 1) * limit
         const end = start + limit
