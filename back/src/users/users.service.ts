@@ -5,6 +5,10 @@ import { UsersRepository } from './users.repository';
 export class UsersService {
     constructor(private readonly usersRepository: UsersRepository) {}
     
+    getUserByEmail(email: string) {
+        return this.usersRepository.getUserByEmail(email)
+    }
+    
     getUsers(page: string, limit: string) {
         return this.usersRepository.getUsers(Number(page), Number(limit))
     }
